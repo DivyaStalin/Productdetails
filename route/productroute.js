@@ -2,13 +2,15 @@ const router = require('express').Router();
 const productSchema = require('../model/productmodel');
 //console.log("productschem",productSchema);
 const {isAdmin} = require('../middleware/auth')
-
+const catSchema = require("../model/categorymodel");
 router.post('/addproduct',isAdmin, async (req,res)=>{
          console.log("body",req.body);
         let productName = req.body.productName;
         let price = req.body.price;
         let color = req.body.color;
+        let productModel = req.body.productModel;
         let userUuid = req.body.userUuid;
+        
         const data = new productSchema(req.body);
 
         const result = await data.save();
@@ -58,6 +60,48 @@ router.put("/updateproduct",async (req, res) => {
         });
         }
     });
+    router.get('/getallproduct',isAdmin,async(req,res)=>{
+        const alluser = await productSchema.find().exec();
+    
+        if(alluser){
+            res.status(200)
+            .json({status:true,message:'success',result:alluser});   
+        }
+        else{
+            res.status(400)
+            .json({status:false,message:'failed'});
+        }
+    });
+    router.get("/getone",isAdmin,async(req,res) => {
+        let user = req.body.productName;
+        const alluser = await productSchema.findOne({productName:user}).exec();
+        console.log("user det",alluser);
+        if(alluser){
+            res.status(200)
+            .json({status:true,message:'success',result:alluser});   
+        }
+        else{
+            res.status(400)
+            .json({status:false,message:'failed'});
+        }
+    });
+   router.post('/addcategory',isAdmin,async(req,res)=>{
+    try{
+      console.log("request body",req.body);
+    let catName = req.body.catName;
+    let image = req.body.image;
+    let userUuid = req.body.userUuid;
+    const data = new catSchema(req,res);
+    const result = await data.save();
+    console.log("result:",result);
+    res.status(200)
+            .json({status:true,message:'successfully added',result:result});  
+    }catch(err){
+        res.status(400)
+        .json({status:false,message:err.message});   
+    }
+   }); 
+    
     
     
 module.exports = router;

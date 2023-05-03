@@ -4,6 +4,9 @@ const {userInfo} = require('os');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyparser.json());
+
 
 app.set("view engine","ejs");
 app.use(express.static('./img'));
@@ -22,9 +25,6 @@ app.use(express.json());
 const userroute = require("./route/userroute");
 const productRoute= require("./route/productroute");
 const port = 8005;
-//db_url="mongodb+srv://register:signin@cluster0.a9meatp.mongodb.net/test";
-app.use(bodyparser.urlencoded({extended:false}));
-app.use(bodyparser.json());
 const uri = process.env.db_url;
 mongoose.connect(
     uri, {
