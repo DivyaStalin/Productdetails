@@ -8,7 +8,7 @@ router.post('/addproduct',isAdmin, async (req,res)=>{
         let productName = req.body.productName;
         let price = req.body.price;
         let color = req.body.color;
-        let productModel = req.body.productModel;
+        
         let userUuid = req.body.userUuid;
         
         const data = new productSchema(req.body);
@@ -91,7 +91,8 @@ router.put("/updateproduct",async (req, res) => {
     let catName = req.body.catName;
     let image = req.body.image;
     let userUuid = req.body.userUuid;
-    const data = new catSchema(req,res);
+    let pName = req.body.pName;
+    const data = new catSchema(req.body);
     const result = await data.save();
     console.log("result:",result);
     res.status(200)
@@ -101,7 +102,33 @@ router.put("/updateproduct",async (req, res) => {
         .json({status:false,message:err.message});   
     }
    }); 
-    
+   router.get("/getcatproduct",async(req,res) => {
+    let pName = req.body.pName;
+    const alluser = await catSchema.find({pName:pName}).exec();
+    console.log("user det",alluser);
+    if(alluser){
+        res.status(200)
+        .json({status:true,message:'success',result:alluser});   
+    }
+    else{
+        res.status(400)
+        .json({status:false,message:'failed'});
+    }
+});
+router.get("/getcatuser",async(req,res) => {
+    let uuid = req.body.userUuid;
+    const alluser = await catSchema.find({userUuid:uuid}).exec();
+    console.log("user det",alluser);
+    if(alluser){
+        res.status(200)
+        .json({status:true,message:'success',result:alluser});   
+    }
+    else{
+        res.status(400)
+        .json({status:false,message:'failed'});
+    }
+});
+
     
     
 module.exports = router;

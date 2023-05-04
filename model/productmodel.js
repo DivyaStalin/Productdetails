@@ -7,7 +7,7 @@ const productSchema = mongoose.Schema(
         productName: {type:String,required:true},
         price: {type:String,required:true},
         color: {type:String,required:true},
-        productModel:{type:String,required:true},
+        catUuid:{type:String,required:true},
         userUuid: {type:String,required:true}
 
      },
