@@ -3,23 +3,43 @@ const { Router } = require('express');
 const bcrypt = require('bcrypt');
 const route = require('express').Router();
 const jwt = require('jsonwebtoken');
+const { mailsending } = require('../middleware/mailer');
+
 route.post("/register",async (req,res)=>{
     console.log("user body",req.body);
      let userName = req.body.userName;
      let email = req.body.email;
      let password = req.body.password;
      let role = req.body.role;
-    const user =  UserSchema(req.body);
-    const salt = await bcrypt.genSalt(10);
-    user.password = bcrypt.hashSync(password,salt);
+
+    const mailData = {
+        to:email,
+        subject:"verify email",
+        text:"Hello",
+        details:{
+            name:userName,
+            date:new Date(),
+        },
+    };
+
+    let mailresult = mailsending(mailData);
+    if(!mailresult){
+        console.log("mail not sending");
+    }else{
+        console.log("email sent");
+        const user =  UserSchema(req.body);
+        const salt = await bcrypt.genSalt(10);
+        user.password = bcrypt.hashSync(password,salt);
     
-    const result = await user.save();
-    if(result){
-    return res.status(200)
-    .json({status:true,message:'success',result:result});}
-    else {
-        return res.status(400).json({status: false,message:"failed",});
+        const result = await user.save();
+        if(result){
+          return res.status(200)
+          .json({status:true,message:'success',result:result});}
+         else {
+            return res.status(400).json({status: false,message:"failed",});
     }
+    }
+    
 });
 route.get('/getall',async(req,res)=>{
     const alluser = await UserSchema.find().exec();

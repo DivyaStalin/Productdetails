@@ -187,22 +187,27 @@ try{
 //filter product by price
 router.get('/filterByPrice', async(req,res)=>{
     try{
-        let id = req.query.id;
-        const filterProduct = await productSchema.find({price:id}).exec();
-        if(filterProduct)
-             res.status(200).json({status:true,message:'success',result:filterProduct});
-        }catch(err){
+        let queryObj= {...req.query};
+        console.log("query",queryObj);
+        let queryStr = JSON.stringify(queryObj);
+         queryStr = queryStr.replace(/\b(gte|lte|gt|lt)\b/g,(match)=>`$${match}`);
+        let result = await productSchema.find(JSON.parse(queryStr));
+        res.status(200).json({status:true,message:'success',result:result});
+    }catch(err){
         res.status(400).json({status:false,message:err.message});
       console.log(err.message);
+
     }  
     });  
     //sort product by name
-    router.get('/getProductByName', async(req,res)=>{
+    router.get('/search', async(req,res)=>{
         try{
-            let id = req.query.id;
-            const filterProduct = await productSchema.find({productName:id}).exec();
-            if(filterProduct)
-                 res.status(200).json({status:true,message:'success',result:filterProduct});
+            let keyword = req.query.productName;
+            let data = await productSchema.find({
+                "$or":[{productName:{'$regex':req.query.keyword}}]
+            }).exec();
+            if(data)
+                 res.status(200).json({status:true,message:'success',result:data});
             }catch(err){
             res.status(400).json({status:false,message:err.message});
           console.log(err.message);
