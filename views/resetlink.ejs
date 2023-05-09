@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResetPasswordLink</title>
+</head>
+<style>
+    body{
+        margin: 10%;
+        padding: 5%;
+    }
+    form{
+        padding-top: 5%;
+        background-color: aqua;
+    }
+    input{
+        font-size: 30px;
+        border-radius: 20%;
+        background-color: yellow;
+    }
+    button{
+        width: 90px;
+        height: 40px;
+        border-radius: 10px;
+        margin: 5%;
+    }
+</style>
+<body>
+    
+    <div class="container">
+        <center>
+    <form action="/user/resetlink" method="post">
+    <input type="email"name="email" placeholder="Enter email "/><div>
+    <button onclick='document.getElementById("demo").innerHTML="Check your mail to reset your password"'>Click</button>
+    </div>
+    <h4 id="demo"></h4>
+    </form>
+        </center>
+</div>
+</body>
+</html>

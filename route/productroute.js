@@ -193,7 +193,8 @@ router.get('/filterByPrice', async(req,res)=>{
          queryStr = queryStr.replace(/\b(gte|lte|gt|lt)\b/g,(match)=>`$${match}`);
         let result = await productSchema.find(JSON.parse(queryStr));
         res.status(200).json({status:true,message:'success',result:result});
-    }catch(err){
+        
+       }catch(err){
         res.status(400).json({status:false,message:err.message});
       console.log(err.message);
 

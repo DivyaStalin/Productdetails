@@ -16,9 +16,17 @@ app.get('/signup',(req,res)=>{
 app.get('/login',(req,res)=>{
     res.render('login.ejs');
 });
-app.get('/logout',(req,res)=>{
+app.get('/register',(req,res)=>{
     res.render('login.ejs');
 });
+app.get('/resetlink',(req,res)=>{
+    res.render('resetlink.ejs');
+});
+app.get('/reset',(req,res)=>{
+    res.render('reset.ejs');
+});
+
+
 
 const env = require("dotenv").config();
 app.use(express.json());

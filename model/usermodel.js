@@ -9,8 +9,9 @@ const userSchema = new Schema({
     email:{type:String,require:true},
     password:{type:String,require:true},
     loginstatus:{type:String,require:false,default:false},
-    role:{type:String,enum:['admin','user'],required:true,default:"admin"}
-
+    verified:{type:String,required:false,default:true},
+    role:{type:String,enum:['admin','user'],required:true,default:"user"},
+    
 },
 {
     timestamps:true,
