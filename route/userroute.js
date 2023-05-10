@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { mailsending } = require('../middleware/mailer');
 const ejs=require('ejs');
 const {join} = require('path');
+const nodemailer = require('nodemailer');
 
 
 
@@ -202,11 +203,11 @@ route.post("/resetlink",async(req,res)=>{
         if(user){
             console.log("valid");
             res.render("resetlink",{title:"Reset password link is sent to your account"})
-            const url = `http://localhost:8005/user/reset`
+            const url = `http://localhost:8005/reset`
                transporter.sendMail({
                   to: email,
                   subject: 'Verify Account',
-                  html: `Click <a href = '${url}'>here</a> to confirm your email.`
+                  html: `<h4>Hello'${email}'</h4>Click <a href = '${url}'>here</a> to reset your Password.`
        });
 
         }
@@ -223,7 +224,7 @@ route.post("/resetlink",async(req,res)=>{
 //resetPassword
 route.post('/resetPassword',async(req,res)=>{
     let userName=req.body.userName;
-    let resetPassword=req.body.resetPassword;
+    let resetPassword=req.body.password;
     let user = await UserSchema.findOne({userName:userName}).exec();
     try{
     if(user){
@@ -234,7 +235,17 @@ route.post('/resetPassword',async(req,res)=>{
         message:"successfully updated",
         result: updatePassword,
     });
+}
+    else {
+        res.status(400)
+    .json({
+        status:false,
+        message:"Invalid data",
+    
+    });
+
     }
+    
 }catch(err){
     res.status(400).json({status:"false",message:err.message});
 }

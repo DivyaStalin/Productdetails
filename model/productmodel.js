@@ -6,6 +6,8 @@ const productSchema = mongoose.Schema(
         uuid: {type:String,required:false},
         productName: {type:String,required:true},
         price: {type:String,required:true},
+        file:{type:String,required:true},
+        file:{type:String,required:true},
         color: {type:String,required:true},
         catUuid: {type:String,required:true},
         userUuid: {type:String,required:true}

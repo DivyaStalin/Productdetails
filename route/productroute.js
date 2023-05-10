@@ -2,24 +2,73 @@ const router = require('express').Router();
 const productSchema = require('../model/productmodel');
 //console.log("productschem",productSchema);
 const {isAdmin} = require('../middleware/auth')
+const upload = require('../middleware/upload');
 const catSchema = require("../model/categorymodel");
-router.post('/addproduct',isAdmin, async (req,res)=>{
-         console.log("body",req.body);
-        let productName = req.body.productName;
-        let price = req.body.price;
-        let color = req.body.color;
-        let catUuid=req.body.catUuid;
-        let userUuid = req.body.userUuid;
-        
-        const data = new productSchema(req.body);
+const multer = require('multer');
+const path = require('path')
 
-        const result = await data.save();
-        if(result){
-            return res.status(200)
-            .json({status:true,message:'success',result:result});}
-            else {
-                return res.status(400).json({status: false,message:"failed",});
+const storage = multer.diskStorage({
+    destination:(req,file,cb) =>{
+        cb(null,'uploads/')
+    },
+    filename: (req,file,cb) => {
+        const filename = path.extname(file.originalname);
+         cb(null,filename+'-'+Date.now());
+    }
+});
+const uploadOptions = multer({storage:storage}).single('image');
+router.post('/image',async(req,res)=>{
+    try{
+        
+        const upload = await multer({ storage : storage}).single("file");
+        upload(req,res,(err)=>{
+            if(!req.file){
+                res.send("Please select a file");
+            }else if(err instanceof multer.MulterError){
+                res.send(err);
             }
+            else{
+                res.send(req.file.filename);
+            }
+        });
+}
+     catch(err){
+        console.log("Error",err);
+        }
+    
+});
+router.post('/addproduct',upload.single('file'), async (req,res)=>{
+    try{
+         console.log("body",req.body);
+         //const filename = await uploadOptions(req,res);
+            
+        const productdata=new productSchema({    
+         productName : req.body.productName,
+         price : req.body.price,
+         color : req.body.color,
+         catUuid :req.body.catUuid,
+         userUuid : req.body.userUuid
+        })
+         if(req.file){
+            productdata.file=req.file.path
+         }
+     
+        //const data = new productSchema(productdata);
+
+         productdata.save()
+
+        .then(response => {
+            res.status(200)
+            .json({status:true,message:'success'});
+    
+        })
+        .catch(error=>{
+             res.status(400).json({status: false,message:"failed",});
+        });    
+    }catch(err){
+        console.log("err",err);
+    }
+
 });
 router.put("/updateproduct",async (req, res) => {
     let productName = req.body.productName;
