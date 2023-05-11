@@ -2,7 +2,7 @@ const router = require('express').Router();
 const productSchema = require('../model/productmodel');
 //console.log("productschem",productSchema);
 const {isAdmin} = require('../middleware/auth')
-const upload = require('../middleware/upload');
+//const upload = require('../middleware/upload');
 const catSchema = require("../model/categorymodel");
 const multer = require('multer');
 const path = require('path')
@@ -13,10 +13,10 @@ const storage = multer.diskStorage({
     },
     filename: (req,file,cb) => {
         const filename = path.extname(file.originalname);
-         cb(null,filename+'-'+Date.now());
+         cb(null,file.originalname+filename+'-'+Date.now());
     }
 });
-const uploadOptions = multer({storage:storage}).single('image');
+const uploadOptions = multer({storage:storage});
 router.post('/image',async(req,res)=>{
     try{
         
@@ -37,12 +37,10 @@ router.post('/image',async(req,res)=>{
         }
     
 });
-router.post('/addproduct',upload.single('file'), async (req,res)=>{
+router.post('/addproduct',uploadOptions.single('file'), async (req,res)=>{
     try{
          console.log("body",req.body);
-         //const filename = await uploadOptions(req,res);
-            
-        const productdata=new productSchema({    
+         const productdata=new productSchema({    
          productName : req.body.productName,
          price : req.body.price,
          color : req.body.color,
@@ -50,7 +48,7 @@ router.post('/addproduct',upload.single('file'), async (req,res)=>{
          userUuid : req.body.userUuid
         })
          if(req.file){
-            productdata.file=req.file.path
+            productdata.file=req.file.filename;
          }
      
         //const data = new productSchema(productdata);
